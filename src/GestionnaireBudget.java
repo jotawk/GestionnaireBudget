@@ -33,7 +33,7 @@ public class GestionnaireBudget {
                 categorieRecherchee = scanner.nextLine();
                 calculerTotalParCategorie(montantsDepenses, categories, nombreDepenses, categorieRecherchee);
             } else if (choix == 5) {
-                afficherStatistiquesVisuelles(montantsDepenses, categories, nomsDepenses, nombreDepenses);
+                afficherStatistiquesVisuelles(montantsDepenses, categories, nombreDepenses);
             } else if (choix == 6) {
                 continuer = false;
             }
@@ -157,7 +157,6 @@ public class GestionnaireBudget {
     public static void afficherStatistiquesVisuelles(
             double[] montantsDepenses,
             String[] categories,
-            String [] nomsDepenses,
             int nombreDepenses
             ) {
         System.out.println("\uD83D\uDCCA === STATISTIQUES VISUELLES ===");
