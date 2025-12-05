@@ -1,11 +1,10 @@
 🇫🇷 Le projet GestionnaireBudget est une application console simple permettant de gérer un ensemble de dépenses : ajouter des dépenses, afficher la liste complète, consulter le total, et organiser les dépenses par catégories.
+
 Ce projet a été réalisé dans un objectif pédagogique dans le but de pratiquer les fondamentaux du langage Java.
 
 Le programme utilise :
-
-Un menu en boucle permettant de sélectionner des actions
-
-Trois tableaux synchronisés pour stocker : les noms des dépenses, les montants et les catégories
+- Un menu en boucle permettant de sélectionner des actions
+- Trois tableaux synchronisés pour stocker : les noms des dépenses, les montants et les catégories
 
 Des méthodes dédiées :
 ajouterDepense()
@@ -21,11 +20,11 @@ Ce projet est un travail en progression, je prévois d’y ajouter encore pas ma
 🇬🇧 BudgetManager is a simple console application that allows you to track expenses: add new ones, list all expenses, calculate the total, and categorize each expense.
 This project was created as part of my journey to learn and practice the basics of Java programming.
 
-The program relies on:
+The program relies on :
 A looping menu system to handle user actions
 Three parallel arrays to store: expense names, expense amounts, categories
 
-Well-separated methods such as:
+Well-separated methods such as :
 ajouterDepense()
 afficherToutesDepenses()
 calculerTotal()
