@@ -33,7 +33,7 @@ public class GestionnaireBudget {
                 categorieRecherchee = scanner.nextLine();
                 calculerTotalParCategorie(montantsDepenses, categories, nombreDepenses, categorieRecherchee);
             } else if (choix == 5) {
-
+                afficherStatistiquesVisuelles(montantsDepenses, categories, nomsDepenses, nombreDepenses);
             } else if (choix == 6) {
                 continuer = false;
             }
@@ -113,7 +113,7 @@ public class GestionnaireBudget {
         return total;
     }
 
-    public static void calculerTotalParCategorie (
+    public static double calculerTotalParCategorie (
             double[] montantsDepenses,
             String[] categories,
             int nombreDepenses,
@@ -133,6 +133,42 @@ public class GestionnaireBudget {
             System.out.println("Aucune dépense dans la catégorie : " + categorieRecherchee);
         } else {
             System.out.println("Total " + categorieRecherchee + " : " + total + " euros (" + compteur + " dépense(s))");
+        }
+        return total;
+    }
+
+    public static double calculerTotalCategorieSilencieuse(
+            double[] montantsDepenses,
+            String[] categories,
+            int nombreDepenses,
+            String categorieRecherchee) {
+
+        double total = 0;
+
+        for (int i = 0; i < nombreDepenses; i++) {
+            if(categorieRecherchee.equals(categories[i])) {
+                total += montantsDepenses[i];
+            }
+        }
+
+        return total;
+    }
+
+    public static void afficherStatistiquesVisuelles(
+            double[] montantsDepenses,
+            String[] categories,
+            String [] nomsDepenses,
+            int nombreDepenses
+            ) {
+        System.out.println("\uD83D\uDCCA === STATISTIQUES VISUELLES ===");
+
+        String[] cats = {"Nourriture", "Transport", "Loyer", "Loisirs"};
+        double totalGeneral = calculerTotal(montantsDepenses, nombreDepenses);
+
+        for (int i = 0; i < 4; i++) {
+            double totalCat = calculerTotalCategorieSilencieuse(montantsDepenses, categories, nombreDepenses, cats[i]);
+            double pourcentage = (totalCat / totalGeneral) * 100;
+            System.out.println(cats[i] + " : " + totalCat + "€ (" + Math.round(pourcentage) + "%)");
         }
     }
 }
