@@ -8,6 +8,8 @@ public class GestionnaireBudget {
         String[] nomsDepenses = new String[50];
         double[] montantsDepenses = new double[50];
         String[] categories = new String[50];
+        String categorieRecherchee = "";
+
         int nombreDepenses = 0;
 
         System.out.println("💰 === GESTIONNAIRE DE BUDGET === 💰\n");
@@ -25,7 +27,14 @@ public class GestionnaireBudget {
                 nombreDepenses);
             } else if (choix == 3) {
                 System.out.println("Le total des dépenses s'élève à : " + calculerTotal(montantsDepenses, nombreDepenses) + " euros");
+            } else if (choix == 4) {
+                scanner.nextLine();
+                System.out.println("Quelle catégorie voulez-vous consulter ? (Nourriture, Transport, Loyer, Loisirs)");
+                categorieRecherchee = scanner.nextLine();
+                calculerTotalParCategorie(montantsDepenses, categories, nombreDepenses, categorieRecherchee);
             } else if (choix == 5) {
+
+            } else if (choix == 6) {
                 continuer = false;
             }
         }
@@ -39,8 +48,9 @@ public class GestionnaireBudget {
                 "[1] Ajouter une dépense\n" +
                 "[2] Voir toutes les dépenses\n" +
                 "[3] Voir le total\n" +
-                "[4] Statistiques visuelles\n" +
-                "[5] Quitter");
+                "[4] Voir les dépenses par catégorie\n" +
+                "[5] Statistiques visuelles\n" +
+                "[6] Quitter");
     }
 
     public static int demanderChoix(Scanner scanner) {
@@ -101,5 +111,28 @@ public class GestionnaireBudget {
                 total += montantsDepenses[i];
         }
         return total;
+    }
+
+    public static void calculerTotalParCategorie (
+            double[] montantsDepenses,
+            String[] categories,
+            int nombreDepenses,
+            String categorieRecherchee) {
+
+        double total = 0;
+        int compteur = 0;
+
+        for (int i = 0; i < nombreDepenses; i++) {
+            if(categorieRecherchee.equals(categories[i])) {
+                total += montantsDepenses[i];
+                compteur++;
+            }
+        }
+
+        if (compteur == 0) {
+            System.out.println("Aucune dépense dans la catégorie : " + categorieRecherchee);
+        } else {
+            System.out.println("Total " + categorieRecherchee + " : " + total + " euros (" + compteur + " dépense(s))");
+        }
     }
 }
