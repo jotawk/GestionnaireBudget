@@ -159,6 +159,7 @@ public class GestionnaireBudget {
             String[] categories,
             int nombreDepenses
             ) {
+
         System.out.println("\uD83D\uDCCA === STATISTIQUES VISUELLES ===");
 
         String[] cats = {"Nourriture", "Transport", "Loyer", "Loisirs"};
@@ -166,8 +167,15 @@ public class GestionnaireBudget {
 
         for (int i = 0; i < 4; i++) {
             double totalCat = calculerTotalCategorieSilencieuse(montantsDepenses, categories, nombreDepenses, cats[i]);
+
             double pourcentage = (totalCat / totalGeneral) * 100;
-            System.out.println(cats[i] + " : " + totalCat + "€ (" + Math.round(pourcentage) + "%)");
+            int longueurBarre = (int) (pourcentage / 4);
+            System.out.printf("%-12s | ", cats[i]);
+
+            for (int j = 0; j < longueurBarre; j++) {
+                System.out.print("█");
+            }
+            System.out.println(" : " + totalCat + "€ (" + Math.round(pourcentage) + "%)");
         }
     }
 }
