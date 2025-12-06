@@ -35,6 +35,8 @@ public class GestionnaireBudget {
             } else if (choix == 5) {
                 afficherStatistiquesVisuelles(montantsDepenses, categories, nombreDepenses);
             } else if (choix == 6) {
+                nombreDepenses = supprimerUneDepense(scanner, nomsDepenses, montantsDepenses, categories, nombreDepenses);
+            } else if (choix == 7) {
                 continuer = false;
             }
         }
@@ -50,7 +52,8 @@ public class GestionnaireBudget {
                 "[3] Voir le total\n" +
                 "[4] Voir les dépenses par catégorie\n" +
                 "[5] Statistiques visuelles\n" +
-                "[6] Quitter");
+                "[6] Supprimer une dépense\n" +
+                "[7] Quitter");
     }
 
     public static int demanderChoix(Scanner scanner) {
@@ -98,7 +101,7 @@ public class GestionnaireBudget {
 
         // Boucle pour afficher chaque dépense
         for (int i = 0; i < nombreDepenses; i++) {
-        System.out.println((i+1) + " " + nomsDepenses[i] + " : " + montantsDepenses[i] + "euros de catégorie : " + categories[i]);
+        System.out.println((i+1) + " " + nomsDepenses[i] + " : " + montantsDepenses[i] + " euros de catégorie : " + categories[i]);
         }
 
         System.out.println("\nTotal : " + nombreDepenses + " dépenses");
@@ -178,4 +181,35 @@ public class GestionnaireBudget {
             System.out.println(" : " + totalCat + "€ (" + Math.round(pourcentage) + "%)");
         }
     }
-}
+
+    public static int supprimerUneDepense(
+            Scanner scanner,
+            String[] nomsDepenses,
+            double[] montantsDepenses,
+            String[] categories,
+            int nombreDepenses) {
+
+        scanner.nextLine();
+        System.out.println("Quel est la dépense que vous souhaitez supprimer ?");
+        afficherToutesDepenses(nomsDepenses, montantsDepenses, categories, nombreDepenses);
+
+        System.out.println("Quel numéro de dépense voulez-vous supprimer ?");
+        int numero = scanner.nextInt();
+
+        if (numero < 1 || numero > nombreDepenses) {
+            System.out.println("❌ Merci d'insérer un nombre valide !");
+            return nombreDepenses;
+        }
+
+        int index = numero - 1;
+
+        for (int i = index; i < nombreDepenses - 1; i++) {
+            nomsDepenses[i] = nomsDepenses[i + 1];
+            montantsDepenses[i] = montantsDepenses[i + 1];
+            categories[i] = categories[i + 1];
+        }
+        System.out.println("✅ Dépense supprimée !");
+        return nombreDepenses - 1;
+        }
+    }
+
