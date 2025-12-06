@@ -9,17 +9,18 @@ public class GestionnaireBudget {
         double[] montantsDepenses = new double[50];
         String[] categories = new String[50];
         String categorieRecherchee = "";
-
         int nombreDepenses = 0;
 
         System.out.println("💰 === GESTIONNAIRE DE BUDGET === 💰\n");
+        System.out.println("Quel est votre budget mensuel ?");
+        double budget = scanner.nextDouble();
 
         while (continuer) {
             afficherMenu();
             int choix = demanderChoix(scanner);
 
             if (choix == 1) {
-                nombreDepenses = ajouterDepense(scanner, nomsDepenses, montantsDepenses, categories, nombreDepenses);
+                nombreDepenses = ajouterDepense(scanner, budget, nomsDepenses, montantsDepenses, categories, nombreDepenses);
             } else if (choix == 2) {
                 afficherToutesDepenses(nomsDepenses,
                 montantsDepenses,
@@ -38,6 +39,8 @@ public class GestionnaireBudget {
                 nombreDepenses = supprimerUneDepense(scanner, nomsDepenses, montantsDepenses, categories, nombreDepenses);
             } else if (choix == 7) {
                 continuer = false;
+            } else if (choix == 8) {
+                afficherBudgetRestant(budget, montantsDepenses, nombreDepenses);
             }
         }
 
@@ -53,15 +56,39 @@ public class GestionnaireBudget {
                 "[4] Voir les dépenses par catégorie\n" +
                 "[5] Statistiques visuelles\n" +
                 "[6] Supprimer une dépense\n" +
-                "[7] Quitter");
+                "[7] Quitter\n" +
+                "[8] Voir mon budget restant\n");
     }
 
+    public static void afficherBudgetRestant(
+            double budget,
+            double[] montantsDepenses,
+            int nombreDepenses) {
+
+        double totalDepense = calculerTotal(montantsDepenses, nombreDepenses);
+        double reste = budget - totalDepense;
+
+        System.out.println("\n💰 === BUDGET MENSUEL ===");
+        System.out.println("Budget mensuel : " + budget + "€");
+        System.out.println("Total dépensé : " + totalDepense + "€");
+        System.out.println("Il vous reste : " + reste + "€");
+
+        double pourcentageUtilise = (totalDepense / budget) * 100;
+        if (pourcentageUtilise < 50) {
+            System.out.println("😊 Tout va bien !");
+        } else if (pourcentageUtilise < 80) {
+            System.out.println("⚠️ Attention à vos dépenses !");
+        } else {
+            System.out.println("🚨 Budget presque épuisé !");
+        }
+    }
     public static int demanderChoix(Scanner scanner) {
         System.out.print("\nVotre choix : ");
         return scanner.nextInt();
     }
 
     public static int ajouterDepense(Scanner scanner,
+                                     double budget,
                                      String[] noms,
                                      double[] montants,
                                      String[] cats,
@@ -82,7 +109,6 @@ public class GestionnaireBudget {
             noms[nombreActuel] = nomDepense;
             montants[nombreActuel] = montantDepense;
             cats[nombreActuel] = categorie;
-
             System.out.println("✅ Dépense ajoutée !");
         }
         return nombreActuel + 1;
@@ -198,7 +224,6 @@ public class GestionnaireBudget {
 
         if (numero < 1 || numero > nombreDepenses) {
             System.out.println("❌ Merci d'insérer un nombre valide !");
-            return nombreDepenses;
         }
 
         int index = numero - 1;
@@ -206,7 +231,8 @@ public class GestionnaireBudget {
         for (int i = index; i < nombreDepenses - 1; i++) {
             nomsDepenses[i] = nomsDepenses[i + 1];
             montantsDepenses[i] = montantsDepenses[i + 1];
-            categories[i] = categories[i + 1];
+            categories[i] = categories[i + 1];;
+            return nombreDepenses;
         }
         System.out.println("✅ Dépense supprimée !");
         return nombreDepenses - 1;
