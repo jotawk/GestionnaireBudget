@@ -1,3 +1,4 @@
+import java.util.Objects;
 import java.util.Scanner;
 
 public class GestionnaireBudget {
@@ -38,8 +39,10 @@ public class GestionnaireBudget {
             } else if (choix == 6) {
                 nombreDepenses = supprimerUneDepense(scanner, nomsDepenses, montantsDepenses, categories, nombreDepenses);
             } else if (choix == 7) {
-                continuer = false;
+                modifierUneDepense(scanner, nomsDepenses, montantsDepenses, categories, nombreDepenses);
             } else if (choix == 8) {
+                continuer = false;
+            } else if (choix == 9) {
                 afficherBudgetRestant(budget, montantsDepenses, nombreDepenses);
             }
         }
@@ -56,8 +59,9 @@ public class GestionnaireBudget {
                 "[4] Voir les dépenses par catégorie\n" +
                 "[5] Statistiques visuelles\n" +
                 "[6] Supprimer une dépense\n" +
-                "[7] Quitter\n" +
-                "[8] Voir mon budget restant\n");
+                "[7] Modifier une dépense\n" +
+                "[8] Quitter\n" +
+                "[9] Voir mon budget restant\n");
     }
 
     public static void afficherBudgetRestant(
@@ -113,6 +117,51 @@ public class GestionnaireBudget {
         }
         return nombreActuel + 1;
     }
+
+    public static void modifierUneDepense(
+            Scanner scanner,
+            String[] nomsDepenses,
+            double[] montantsDepenses,
+            String[] categories,
+            int nombreDepenses
+    ) {
+        scanner.nextLine();
+        afficherToutesDepenses(nomsDepenses, montantsDepenses, categories, nombreDepenses);
+        System.out.println("Quel est le n° de la ligne que vous souhaitez modifier ?");
+        int numeroLigne = scanner.nextInt();
+
+        if (numeroLigne < 1 || numeroLigne > nombreDepenses) {
+            System.out.println("❌ Numéro invalide !");
+            return;
+        }
+        int index = numeroLigne - 1;
+        System.out.println("Que voulez-vous modifier ?" +
+                "[1] Nom\n" +
+                "[2] Montant\n" +
+                "[3] Catégorie\n");
+
+        int choixModif = scanner.nextInt();
+        if (choixModif == 1) {
+            scanner.nextLine();
+            System.out.println("Quel nouveau nom souhaitez-vous ?");
+            String nouveauNom = scanner.nextLine();
+            nomsDepenses[index] = nouveauNom;
+
+        } else if (choixModif == 2) {
+            System.out.println("Quel nouveau montant souhaitez-vous ?");
+            double nouveauPrix = scanner.nextDouble();
+            montantsDepenses[index] = nouveauPrix;
+
+        } else {
+            scanner.nextLine();
+            System.out.println("Quel nouvelle catégorie souhaitez-vous ?");
+            String nouvelleCategorie = scanner.nextLine();
+            categories[index] = nouvelleCategorie;
+        }
+        System.out.println("✅ Dépense modifiée avec succès !");
+    }
+
+
     public static void afficherToutesDepenses(
             String[] nomsDepenses,
             double[] montantsDepenses,
