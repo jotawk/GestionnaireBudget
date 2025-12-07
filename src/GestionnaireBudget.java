@@ -1,16 +1,14 @@
-import java.util.Objects;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class GestionnaireBudget {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        scanner.useLocale(java.util.Locale.FRENCH);
         boolean continuer = true;
 
-        String[] nomsDepenses = new String[50];
-        double[] montantsDepenses = new double[50];
-        String[] categories = new String[50];
+        ArrayList<Depense> depenses = new ArrayList<>();
         String categorieRecherchee = "";
-        int nombreDepenses = 0;
 
         System.out.println("💰 === GESTIONNAIRE DE BUDGET === 💰\n");
         System.out.println("Quel est votre budget mensuel ?");
@@ -21,29 +19,26 @@ public class GestionnaireBudget {
             int choix = demanderChoix(scanner);
 
             if (choix == 1) {
-                nombreDepenses = ajouterDepense(scanner, budget, nomsDepenses, montantsDepenses, categories, nombreDepenses);
+                ajouterDepense(scanner, depenses);
             } else if (choix == 2) {
-                afficherToutesDepenses(nomsDepenses,
-                montantsDepenses,
-                categories,
-                nombreDepenses);
+                afficherToutesDepenses(depenses);
             } else if (choix == 3) {
-                System.out.println("Le total des dépenses s'élève à : " + calculerTotal(montantsDepenses, nombreDepenses) + " euros");
+                System.out.println("Le total des dépenses s'élève à : " + calculerTotal(depenses) + " euros");
             } else if (choix == 4) {
                 scanner.nextLine();
                 System.out.println("Quelle catégorie voulez-vous consulter ? (Nourriture, Transport, Loyer, Loisirs)");
                 categorieRecherchee = scanner.nextLine();
-                calculerTotalParCategorie(montantsDepenses, categories, nombreDepenses, categorieRecherchee);
+                calculerTotalParCategorie(depenses, categorieRecherchee);
             } else if (choix == 5) {
-                afficherStatistiquesVisuelles(montantsDepenses, categories, nombreDepenses);
+                afficherStatistiquesVisuelles(depenses);
             } else if (choix == 6) {
-                nombreDepenses = supprimerUneDepense(scanner, nomsDepenses, montantsDepenses, categories, nombreDepenses);
+                supprimerUneDepense(scanner, depenses);
             } else if (choix == 7) {
-                modifierUneDepense(scanner, nomsDepenses, montantsDepenses, categories, nombreDepenses);
+                modifierUneDepense(scanner, depenses);
             } else if (choix == 8) {
                 continuer = false;
             } else if (choix == 9) {
-                afficherBudgetRestant(budget, montantsDepenses, nombreDepenses);
+                afficherBudgetRestant(budget, depenses);
             }
         }
 
@@ -64,12 +59,8 @@ public class GestionnaireBudget {
                 "[9] Voir mon budget restant\n");
     }
 
-    public static void afficherBudgetRestant(
-            double budget,
-            double[] montantsDepenses,
-            int nombreDepenses) {
-
-        double totalDepense = calculerTotal(montantsDepenses, nombreDepenses);
+    public static void afficherBudgetRestant(double budget, ArrayList<Depense> depenses) {
+        double totalDepense = calculerTotal(depenses);
         double reste = budget - totalDepense;
 
         System.out.println("\n💰 === BUDGET MENSUEL ===");
@@ -86,123 +77,108 @@ public class GestionnaireBudget {
             System.out.println("🚨 Budget presque épuisé !");
         }
     }
+
     public static int demanderChoix(Scanner scanner) {
         System.out.print("\nVotre choix : ");
         return scanner.nextInt();
     }
 
-    public static int ajouterDepense(Scanner scanner,
-                                     double budget,
-                                     String[] noms,
-                                     double[] montants,
-                                     String[] cats,
-                                     int nombreActuel) {
+    public static void ajouterDepense(Scanner scanner, ArrayList<Depense> depenses) {
         scanner.nextLine();
         System.out.println("Quel est le nom de la dépense ?");
         String nomDepense = scanner.nextLine();
+
         System.out.println("Quel est le montant de la dépense ?");
         double montantDepense = scanner.nextDouble();
         scanner.nextLine();
-        System.out.println("Quel est la catégorie de la dépense ? (Nourriture, Transport, Loyer, Loisirs...)");
-        String categorie = scanner.nextLine();
-        if (categorie.equals("Nourriture") ||
-                categorie.equals("Transport") ||
-                categorie.equals("Loyer") ||
-                categorie.equals("Loisirs")) {
 
-            noms[nombreActuel] = nomDepense;
-            montants[nombreActuel] = montantDepense;
-            cats[nombreActuel] = categorie;
+        System.out.println("Quelle est la catégorie de la dépense ? (Nourriture, Transport, Loyer, Loisirs...)");
+        String categorie = scanner.nextLine();
+
+        if (categorie.equals("Nourriture") || categorie.equals("Transport") ||
+                categorie.equals("Loyer") || categorie.equals("Loisirs")) {
+
+            Depense nouvelleDepense = new Depense(nomDepense, montantDepense, categorie);
+            depenses.add(nouvelleDepense);
             System.out.println("✅ Dépense ajoutée !");
         }
-        return nombreActuel + 1;
     }
 
-    public static void modifierUneDepense(
-            Scanner scanner,
-            String[] nomsDepenses,
-            double[] montantsDepenses,
-            String[] categories,
-            int nombreDepenses
-    ) {
+    public static void modifierUneDepense(Scanner scanner, ArrayList<Depense> depenses) {
         scanner.nextLine();
-        afficherToutesDepenses(nomsDepenses, montantsDepenses, categories, nombreDepenses);
+        afficherToutesDepenses(depenses);
+
         System.out.println("Quel est le n° de la ligne que vous souhaitez modifier ?");
         int numeroLigne = scanner.nextInt();
 
-        if (numeroLigne < 1 || numeroLigne > nombreDepenses) {
+        if (numeroLigne < 1 || numeroLigne > depenses.size()) {
             System.out.println("❌ Numéro invalide !");
             return;
         }
+
         int index = numeroLigne - 1;
-        System.out.println("Que voulez-vous modifier ?" +
+        Depense depense = depenses.get(index); // Permet de récupérer la dépense
+
+        System.out.println("Que voulez-vous modifier ?\n" +
                 "[1] Nom\n" +
                 "[2] Montant\n" +
-                "[3] Catégorie\n");
+                "[3] Catégorie");
 
         int choixModif = scanner.nextInt();
+
         if (choixModif == 1) {
             scanner.nextLine();
             System.out.println("Quel nouveau nom souhaitez-vous ?");
             String nouveauNom = scanner.nextLine();
-            nomsDepenses[index] = nouveauNom;
+            depense.setNom(nouveauNom);
 
         } else if (choixModif == 2) {
             System.out.println("Quel nouveau montant souhaitez-vous ?");
             double nouveauPrix = scanner.nextDouble();
-            montantsDepenses[index] = nouveauPrix;
+            depense.setMontant(nouveauPrix);
 
-        } else {
+        } else if (choixModif == 3) {
             scanner.nextLine();
-            System.out.println("Quel nouvelle catégorie souhaitez-vous ?");
+            System.out.println("Quelle nouvelle catégorie souhaitez-vous ?");
             String nouvelleCategorie = scanner.nextLine();
-            categories[index] = nouvelleCategorie;
+            depense.setCategorie(nouvelleCategorie);
         }
+
         System.out.println("✅ Dépense modifiée avec succès !");
     }
 
-
-    public static void afficherToutesDepenses(
-            String[] nomsDepenses,
-            double[] montantsDepenses,
-            String[] categories,
-            int nombreDepenses) {
+    public static void afficherToutesDepenses(ArrayList<Depense> depenses) {
         System.out.println("\n📋 TOUTES LES DÉPENSES\n");
 
-        if (nombreDepenses == 0) {
+        if (depenses.size() == 0) {
             System.out.println("Aucune dépense enregistrée.");
             return;
         }
 
-        // Boucle pour afficher chaque dépense
-        for (int i = 0; i < nombreDepenses; i++) {
-        System.out.println((i+1) + " " + nomsDepenses[i] + " : " + montantsDepenses[i] + " euros de catégorie : " + categories[i]);
+        for (int i = 0; i < depenses.size(); i++) {
+            Depense d = depenses.get(i);
+            System.out.println((i + 1) + " " + d.getNom() + " : " + d.getMontant() + " euros de catégorie : " + d.getCategorie());
         }
 
-        System.out.println("\nTotal : " + nombreDepenses + " dépenses");
+        System.out.println("\nTotal : " + depenses.size() + " dépenses");
     }
 
-    public static double calculerTotal(double[] montantsDepenses,
-                                       int nombreDepenses) {
+    public static double calculerTotal(ArrayList<Depense> depenses) {
         double total = 0;
-        for (int i = 0; i < nombreDepenses; i++) {
-                total += montantsDepenses[i];
+        for (int i = 0; i < depenses.size(); i++) {
+            total += depenses.get(i).getMontant();
         }
         return total;
     }
 
-    public static double calculerTotalParCategorie (
-            double[] montantsDepenses,
-            String[] categories,
-            int nombreDepenses,
-            String categorieRecherchee) {
-
+    public static double calculerTotalParCategorie(ArrayList<Depense> depenses, String categorieRecherchee) {
         double total = 0;
         int compteur = 0;
 
-        for (int i = 0; i < nombreDepenses; i++) {
-            if(categorieRecherchee.equals(categories[i])) {
-                total += montantsDepenses[i];
+        for (int i = 0; i < depenses.size(); i++) {
+            Depense d = depenses.get(i);
+            if (categorieRecherchee.equals(d.getCategorie())) {
+                total += d.getMontant();
                 compteur++;
             }
         }
@@ -215,36 +191,27 @@ public class GestionnaireBudget {
         return total;
     }
 
-    public static double calculerTotalCategorieSilencieuse(
-            double[] montantsDepenses,
-            String[] categories,
-            int nombreDepenses,
-            String categorieRecherchee) {
-
+    public static double calculerTotalCategorieSilencieuse(ArrayList<Depense> depenses, String categorieRecherchee) {
         double total = 0;
 
-        for (int i = 0; i < nombreDepenses; i++) {
-            if(categorieRecherchee.equals(categories[i])) {
-                total += montantsDepenses[i];
+        for (int i = 0; i < depenses.size(); i++) {
+            Depense d = depenses.get(i);
+            if (categorieRecherchee.equals(d.getCategorie())) {
+                total += d.getMontant();
             }
         }
 
         return total;
     }
 
-    public static void afficherStatistiquesVisuelles(
-            double[] montantsDepenses,
-            String[] categories,
-            int nombreDepenses
-            ) {
-
+    public static void afficherStatistiquesVisuelles(ArrayList<Depense> depenses) {
         System.out.println("\uD83D\uDCCA === STATISTIQUES VISUELLES ===");
 
         String[] cats = {"Nourriture", "Transport", "Loyer", "Loisirs"};
-        double totalGeneral = calculerTotal(montantsDepenses, nombreDepenses);
+        double totalGeneral = calculerTotal(depenses);
 
         for (int i = 0; i < 4; i++) {
-            double totalCat = calculerTotalCategorieSilencieuse(montantsDepenses, categories, nombreDepenses, cats[i]);
+            double totalCat = calculerTotalCategorieSilencieuse(depenses, cats[i]);
 
             double pourcentage = (totalCat / totalGeneral) * 100;
             int longueurBarre = (int) (pourcentage / 4);
@@ -257,34 +224,20 @@ public class GestionnaireBudget {
         }
     }
 
-    public static int supprimerUneDepense(
-            Scanner scanner,
-            String[] nomsDepenses,
-            double[] montantsDepenses,
-            String[] categories,
-            int nombreDepenses) {
-
+    public static void supprimerUneDepense(Scanner scanner, ArrayList<Depense> depenses) {
         scanner.nextLine();
-        System.out.println("Quel est la dépense que vous souhaitez supprimer ?");
-        afficherToutesDepenses(nomsDepenses, montantsDepenses, categories, nombreDepenses);
+        afficherToutesDepenses(depenses);
 
         System.out.println("Quel numéro de dépense voulez-vous supprimer ?");
         int numero = scanner.nextInt();
 
-        if (numero < 1 || numero > nombreDepenses) {
-            System.out.println("❌ Merci d'insérer un nombre valide !");
+        if (numero < 1 || numero > depenses.size()) {
+            System.out.println("❌ Numéro invalide !");
+            return;
         }
 
         int index = numero - 1;
-
-        for (int i = index; i < nombreDepenses - 1; i++) {
-            nomsDepenses[i] = nomsDepenses[i + 1];
-            montantsDepenses[i] = montantsDepenses[i + 1];
-            categories[i] = categories[i + 1];;
-            return nombreDepenses;
-        }
+        depenses.remove(index);
         System.out.println("✅ Dépense supprimée !");
-        return nombreDepenses - 1;
-        }
     }
-
+}
