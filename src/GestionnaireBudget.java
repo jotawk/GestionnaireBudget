@@ -20,6 +20,10 @@ public class GestionnaireBudget {
 
             if (choix == 1) {
                 ajouterDepense(scanner, depenses);
+                if (!depenses.isEmpty()) {
+                    System.out.println("\n📋 Aperçu de votre dépense :");
+                    depenses.get(depenses.size()-1).afficher();
+                }
             } else if (choix == 2) {
                 afficherToutesDepenses(depenses);
             } else if (choix == 3) {
@@ -157,7 +161,7 @@ public class GestionnaireBudget {
 
         for (int i = 0; i < depenses.size(); i++) {
             Depense d = depenses.get(i);
-            System.out.println((i + 1) + " " + d.getNom() + " : " + d.getMontant() + " euros de catégorie : " + d.getCategorie());
+            System.out.println((i+1) + ". " + d);
         }
 
         System.out.println("\nTotal : " + depenses.size() + " dépenses");

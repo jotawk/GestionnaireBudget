@@ -33,4 +33,17 @@ public class Depense {
     public void setCategorie(String categorie) {
         this.categorie = categorie;
     }
+
+    @Override
+    public String toString() {
+        return nom + " : " + montant + "€ (" + categorie + ")";
+    }
+
+    public void afficher() {
+        System.out.println("┌─────────────────────────");
+        System.out.println("│ 💰 " + nom);
+        System.out.println("│ 💵 Montant: " + montant + "€");
+        System.out.println("│ 📂 Catégorie: " + categorie);
+        System.out.println("└─────────────────────────");
+    }
 }
