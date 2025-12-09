@@ -6,7 +6,14 @@ public class Depense {
 
     public Depense(String nom, double montant, String categorie) {
         this.nom = nom;
-        this.montant = montant;
+
+        if (montant <= 0) {
+            System.out.println("❌ Erreur : Le montant doit être positif ! Montant mis à 0.01€");
+            this.montant = 0.01;
+        } else {
+            this.montant = montant;
+        }
+
         this.categorie = categorie;
     }
 
@@ -27,6 +34,10 @@ public class Depense {
     }
 
     public void setMontant(double montant) {
+        if (montant <= 0) {
+            System.out.println("❌ Erreur : Le montant doit être positif !");
+            return;
+        }
         this.montant = montant;
     }
 
