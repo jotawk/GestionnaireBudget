@@ -2,9 +2,9 @@ public class Depense {
 
     private String nom;
     private double montant;
-    private String categorie;
+    private Categorie categorie;
 
-    public Depense(String nom, double montant, String categorie) {
+    public Depense(String nom, double montant, Categorie categorie) {
         this.nom = nom;
 
         if (montant <= 0) {
@@ -14,7 +14,7 @@ public class Depense {
             this.montant = montant;
         }
 
-        this.categorie = categorie;
+        this.categorie = categorie;  // Plus besoin de validation !
     }
 
     public String getNom() {
@@ -25,7 +25,7 @@ public class Depense {
         return montant;
     }
 
-    public String getCategorie() {
+    public Categorie getCategorie() {
         return categorie;
     }
 
@@ -41,7 +41,7 @@ public class Depense {
         this.montant = montant;
     }
 
-    public void setCategorie(String categorie) {
+    public void setCategorie(Categorie categorie) {
         this.categorie = categorie;
     }
 
@@ -56,5 +56,15 @@ public class Depense {
         System.out.println("│ 💵 Montant: " + montant + "€");
         System.out.println("│ 📂 Catégorie: " + categorie);
         System.out.println("└─────────────────────────");
+    }
+
+    private boolean estCategorieValide(String cat) {
+        if (cat == null) return false;
+
+        String catMajuscules = cat.toUpperCase();
+        return catMajuscules.equals("NOURRITURE") ||
+                catMajuscules.equals("TRANSPORT") ||
+                catMajuscules.equals("LOYER") ||
+                catMajuscules.equals("LOISIRS");
     }
 }

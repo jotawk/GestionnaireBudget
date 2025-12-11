@@ -8,7 +8,6 @@ public class GestionnaireBudget {
         boolean continuer = true;
 
         ArrayList<Depense> depenses = new ArrayList<>();
-        String categorieRecherchee = "";
 
         System.out.println("💰 === GESTIONNAIRE DE BUDGET === 💰\n");
         System.out.println("Quel est votre budget mensuel ?");
@@ -29,10 +28,20 @@ public class GestionnaireBudget {
             } else if (choix == 3) {
                 System.out.println("Le total des dépenses s'élève à : " + calculerTotal(depenses) + " euros");
             } else if (choix == 4) {
-                scanner.nextLine();
-                System.out.println("Quelle catégorie voulez-vous consulter ? (Nourriture, Transport, Loyer, Loisirs)");
-                categorieRecherchee = scanner.nextLine();
-                calculerTotalParCategorie(depenses, categorieRecherchee);
+                System.out.println("Quelle catégorie voulez-vous consulter ?\n" +
+                        "[1] Nourriture\n" +
+                        "[2] Transport\n" +
+                        "[3] Loyer\n" +
+                        "[4] Loisirs");
+                int choixCat = scanner.nextInt();
+
+                Categorie cat;
+                if (choixCat == 1) cat = Categorie.NOURRITURE;
+                else if (choixCat == 2) cat = Categorie.TRANSPORT;
+                else if (choixCat == 3) cat = Categorie.LOYER;
+                else cat = Categorie.LOISIRS;
+
+                calculerTotalParCategorie(depenses, cat);
             } else if (choix == 5) {
                 afficherStatistiquesVisuelles(depenses);
             } else if (choix == 6) {
@@ -94,18 +103,28 @@ public class GestionnaireBudget {
 
         System.out.println("Quel est le montant de la dépense ?");
         double montantDepense = scanner.nextDouble();
-        scanner.nextLine();
 
-        System.out.println("Quelle est la catégorie de la dépense ? (Nourriture, Transport, Loyer, Loisirs...)");
-        String categorie = scanner.nextLine();
+        System.out.println("Quelle est la catégorie de la dépense ?\n" +
+                "[1] Nourriture\n" +
+                "[2] Transport\n" +
+                "[3] Loyer\n" +
+                "[4] Loisirs");
+        int choixCategorie = scanner.nextInt();
 
-        if (categorie.equals("Nourriture") || categorie.equals("Transport") ||
-                categorie.equals("Loyer") || categorie.equals("Loisirs")) {
-
-            Depense nouvelleDepense = new Depense(nomDepense, montantDepense, categorie);
-            depenses.add(nouvelleDepense);
-            System.out.println("✅ Dépense ajoutée !");
+        Categorie cat;
+        if (choixCategorie == 1) {
+            cat = Categorie.NOURRITURE;
+        } else if (choixCategorie == 2) {
+            cat = Categorie.TRANSPORT;
+        } else if (choixCategorie == 3) {
+            cat = Categorie.LOYER;
+        } else {
+            cat = Categorie.LOISIRS;
         }
+
+        Depense nouvelleDepense = new Depense(nomDepense, montantDepense, cat);
+        depenses.add(nouvelleDepense);
+        System.out.println("✅ Dépense ajoutée !");
     }
 
     public static void modifierUneDepense(Scanner scanner, ArrayList<Depense> depenses) {
@@ -121,7 +140,7 @@ public class GestionnaireBudget {
         }
 
         int index = numeroLigne - 1;
-        Depense depense = depenses.get(index); // Permet de récupérer la dépense
+        Depense depense = depenses.get(index);
 
         System.out.println("Que voulez-vous modifier ?\n" +
                 "[1] Nom\n" +
@@ -142,10 +161,24 @@ public class GestionnaireBudget {
             depense.setMontant(nouveauPrix);
 
         } else if (choixModif == 3) {
-            scanner.nextLine();
-            System.out.println("Quelle nouvelle catégorie souhaitez-vous ?");
-            String nouvelleCategorie = scanner.nextLine();
-            depense.setCategorie(nouvelleCategorie);
+            System.out.println("Quelle nouvelle catégorie ?\n" +
+                    "[1] Nourriture\n" +
+                    "[2] Transport\n" +
+                    "[3] Loyer\n" +
+                    "[4] Loisirs");
+            int choixCat = scanner.nextInt();
+
+            Categorie nouvelleCat;
+            if (choixCat == 1) {
+                nouvelleCat = Categorie.NOURRITURE;
+            } else if (choixCat == 2) {
+                nouvelleCat = Categorie.TRANSPORT;
+            } else if (choixCat == 3) {
+                nouvelleCat = Categorie.LOYER;
+            } else {
+                nouvelleCat = Categorie.LOISIRS;
+            }
+            depense.setCategorie(nouvelleCat);
         }
 
         System.out.println("✅ Dépense modifiée avec succès !");
@@ -175,13 +208,13 @@ public class GestionnaireBudget {
         return total;
     }
 
-    public static double calculerTotalParCategorie(ArrayList<Depense> depenses, String categorieRecherchee) {
+    public static double calculerTotalParCategorie(ArrayList<Depense> depenses, Categorie categorieRecherchee) {
         double total = 0;
         int compteur = 0;
 
         for (int i = 0; i < depenses.size(); i++) {
             Depense d = depenses.get(i);
-            if (categorieRecherchee.equals(d.getCategorie())) {
+            if (categorieRecherchee == d.getCategorie()) {
                 total += d.getMontant();
                 compteur++;
             }
@@ -195,12 +228,12 @@ public class GestionnaireBudget {
         return total;
     }
 
-    public static double calculerTotalCategorieSilencieuse(ArrayList<Depense> depenses, String categorieRecherchee) {
+    public static double calculerTotalCategorieSilencieuse(ArrayList<Depense> depenses, Categorie categorieRecherchee) {
         double total = 0;
 
         for (int i = 0; i < depenses.size(); i++) {
             Depense d = depenses.get(i);
-            if (categorieRecherchee.equals(d.getCategorie())) {
+            if (categorieRecherchee == d.getCategorie()) {
                 total += d.getMontant();
             }
         }
@@ -209,9 +242,9 @@ public class GestionnaireBudget {
     }
 
     public static void afficherStatistiquesVisuelles(ArrayList<Depense> depenses) {
-        System.out.println("\uD83D\uDCCA === STATISTIQUES VISUELLES ===");
+        System.out.println("📊 === STATISTIQUES VISUELLES ===");
 
-        String[] cats = {"Nourriture", "Transport", "Loyer", "Loisirs"};
+        Categorie[] cats = {Categorie.NOURRITURE, Categorie.TRANSPORT, Categorie.LOYER, Categorie.LOISIRS};
         double totalGeneral = calculerTotal(depenses);
 
         for (int i = 0; i < 4; i++) {
